@@ -12,6 +12,7 @@ public class ManagerTaskHandler implements TaskListener {
     @Override
     public void notify(DelegateTask delegateTask) {
         System.out.println("-----------------------经理执行----------------");
+        System.out.println(delegateTask.getName());
         delegateTask.setAssignee("经理");
     }
 }

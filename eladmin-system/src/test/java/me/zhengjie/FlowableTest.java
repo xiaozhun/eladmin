@@ -1,5 +1,9 @@
 package me.zhengjie;
 
+import org.flowable.bpmn.model.BpmnModel;
+import org.flowable.bpmn.model.Process;
+import org.flowable.bpmn.model.UserTask;
+import org.flowable.bpmn.model.StartEvent;
 import org.flowable.engine.ProcessEngine;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
@@ -13,10 +17,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-//import org.flowable.engine.TaskService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -65,6 +69,37 @@ public class FlowableTest {
     public void startbybusikey(){
         ProcessInstance pi =runtimeService.createProcessInstanceQuery().processInstanceId("6a73971e-b3ea-11e9-b242-5cc5d4b510a3").singleResult();
         System.out.println(pi.getBusinessKey());
+        System.out.println(pi.getProcessDefinitionName());
+        //通过流程定义id获取流程实体
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(pi.getProcessDefinitionId());
+//        获取流程定义
+        Process process = bpmnModel.getProcesses().get(0);
+//        获取任务名称
+        Collection<UserTask> flowElements = process.findFlowElementsOfType(UserTask.class);
+        for (UserTask userTask : flowElements) {
+            System.out.println(userTask.getName());
+
+        }
+        Collection<StartEvent> startEvents = process.findFlowElementsOfType(StartEvent.class);
+        for (StartEvent startEvent : startEvents) {
+            System.out.println(startEvent.getName());
+
+        }
+
+    }
+    @Test
+    public void qianshou(){
+        Task task = taskService.createTaskQuery().taskAssignee("1").orderByTaskCreateTime().desc().singleResult();
+        if (task == null) {
+            throw new RuntimeException("流程不存在");
+        }
+//        设置审核人
+        taskService.addCandidateUser(task.getId(), "2");
+//        获得审核人列表
+        taskService.getIdentityLinksForTask(task.getId());
+//        签收的任务
+        taskService.delegateTask(task.getId(), "2");
+
     }
 
 }
