@@ -44,13 +44,13 @@ public class Role implements Serializable {
     @Column
     private String remark;
 
+    // 权限
+    @Column(name = "permission")
+    private String permission;
+
     @JsonIgnore
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
-
-    @ManyToMany(fetch=FetchType.EAGER)
-    @JoinTable(name = "roles_permissions", joinColumns = {@JoinColumn(name = "role_id",referencedColumnName = "id")}, inverseJoinColumns = {@JoinColumn(name = "permission_id",referencedColumnName = "id")})
-    private Set<Permission> permissions;
 
     @ManyToMany
     @JoinTable(name = "roles_menus", joinColumns = {@JoinColumn(name = "role_id",referencedColumnName = "id")}, inverseJoinColumns = {@JoinColumn(name = "menu_id",referencedColumnName = "id")})
@@ -60,19 +60,11 @@ public class Role implements Serializable {
     @JoinTable(name = "roles_depts", joinColumns = {@JoinColumn(name = "role_id",referencedColumnName = "id")}, inverseJoinColumns = {@JoinColumn(name = "dept_id",referencedColumnName = "id")})
     private Set<Dept> depts;
 
-    @CreationTimestamp
     @Column(name = "create_time")
+    @CreationTimestamp
     private Timestamp createTime;
 
-    @Override
-    public String toString() {
-        return "Role{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", remark='" + remark + '\'' +
-                ", createDateTime=" + createTime +
-                '}';
-    }
+    public @interface Update {}
 
     @Override
     public boolean equals(Object o) {
@@ -86,6 +78,4 @@ public class Role implements Serializable {
     public int hashCode() {
         return Objects.hash(id);
     }
-
-    public interface Update{}
 }

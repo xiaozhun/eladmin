@@ -1,11 +1,15 @@
 <template>
-  <el-dialog :append-to-body="true" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="500px">
+  <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增' : '编辑'" width="500px">
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
 <#if columns??>
   <#list columns as column>
   <#if column.changeColumnName != '${pkChangeColName}'>
       <el-form-item label="<#if column.columnComment != ''>${column.columnComment}<#else>${column.changeColumnName}</#if>" <#if column.columnKey = 'UNI'>prop="${column.changeColumnName}"</#if>>
+        <#if column.columnType != 'Timestamp'>
         <el-input v-model="form.${column.changeColumnName}" style="width: 370px;"/>
+        <#else >
+        <el-date-picker v-model="form.${column.changeColumnName}" type="datetime" style="width: 370px;"/>
+        </#if>
       </el-form-item>
   </#if>
   </#list>
